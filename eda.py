@@ -18,7 +18,7 @@ from itertools import product
 from collections import Counter
 
 
-# In[57]:
+# In[3]:
 
 
 import plotly.express as px
@@ -78,11 +78,6 @@ train.shape
 train.tail()
 
 
-# данные за 2019-04-23 предоставлены единичными регионами.   
-# отсечем их для простоты дальнейшей обработки и исследования
-first_day = train.date.min()
-train.drop(train.query('date == @first_day').index, 
-           axis = 0, inplace = True)
 # In[ ]:
 
 
@@ -102,16 +97,7 @@ items = train.columns.drop(['region', 'oktmo', 'okato', 'date'])
 items
 
 
-# ~~в исходных данных в числах с плавающей запятой запятая, вместо необходимой для python точки.    
-# преобразуем, приводим к float~~
-
 # In[9]:
-
-
-###lambda_dot = lambda x: x.replace(',', '.').replace(u'\xa0', u'')
-
-
-# In[10]:
 
 
 for el in items:
@@ -120,7 +106,7 @@ for el in items:
 
 train['weekday'] = train.date.map(lambda x: x.weekday())
 train.weekday.value_counts()
-# In[12]:
+# In[10]:
 
 
 train.info()
@@ -144,21 +130,21 @@ train.info()
 
 
 
-# In[13]:
+# In[11]:
 
 
 regs = train.region.unique()
 regs
 
 
-# In[14]:
+# In[12]:
 
 
 oktmo = train.oktmo.unique()
 oktmo
 
 
-# In[15]:
+# In[13]:
 
 
 items = train.columns.drop(['region', 'oktmo', 'okato', 'date'])
@@ -177,7 +163,7 @@ with open(os.path.join(PATH_DATA, 'products.csv'), 'w') as fd:
 
 # оценка отношений/схожести среднего по всем регионам и значений в каждом регионе в разрезе продукта
 
-# In[32]:
+# In[14]:
 
 
 def graph_research_products(inp_item):
@@ -265,7 +251,7 @@ graph_research_region(71000000000)
 
 # графики средних значений по всем продуктам
 
-# In[49]:
+# In[15]:
 
 
 def graph_all_prod_aver():
@@ -283,10 +269,10 @@ def graph_all_prod_aver():
         fig.show()
 
 
-# In[67]:
+# In[16]:
 
 
-#graph_all_prod_aver()
+graph_all_prod_aver()
 
 
 # In[ ]:

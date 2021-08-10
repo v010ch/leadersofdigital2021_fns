@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[2]:
+# In[ ]:
 
 
 import os
@@ -21,38 +21,38 @@ from tqdm import tqdm
 
 
 
-# In[3]:
+# In[ ]:
 
 
 from prophet import Prophet
 
 
-# In[4]:
+# In[ ]:
 
 
 #from prophet.plot import plot as fbplot
 
 
-# In[5]:
+# In[ ]:
 
 
 from oktmo_names import oktmo_names_decode as oktmo_names
 
 
-# In[6]:
+# In[ ]:
 
 
 from pylab import rcParams
 rcParams['figure.figsize'] = 22, 7
 
 
-# In[7]:
+# In[ ]:
 
 
 #%pylab inline
 
 
-# In[8]:
+# In[ ]:
 
 
 PATH_DATA = os.path.join(Path.cwd(), 'data')
@@ -65,7 +65,102 @@ PATH_SUBM = os.path.join(Path.cwd(), 'submissions')
 
 
 
-# In[9]:
+# In[ ]:
+
+
+NY =  pd.DataFrame({
+  'holiday': 'new year',
+  'ds': pd.to_datetime(['2019-01-01', '2020-01-01', '2021-01-01', '2022-01-01']),
+  'lower_window': -7,  # 7 days before holiday affect on values
+  'upper_window': 12, # 12 days after holiday affect on values
+})
+
+#= pd.DataFrame({
+#  'holiday': '',
+#  'ds': pd.to_datetime([]),
+# 'lower_window': ,  #  days before holiday affect on values
+#  'upper_window': , #  days after holiday affect on values
+#})
+
+feb14 = pd.DataFrame({
+  'holiday': 'valentines day',
+  'ds': pd.to_datetime(['2019-02-14', '2020-02-14', '2021-02-14', '2022-02-14']),
+  'lower_window': -1,  # 1 days before holiday affect on values
+  'upper_window': 1,  # 1 days after holiday affect on values
+})
+
+feb23 = pd.DataFrame({
+  'holiday': 'defender of the fatherland day',
+  'ds': pd.to_datetime(['2019-02-23', '2020-02-23', '2021-02-23', '2022-02-23']),
+  'lower_window': -5,  # 5 days before holiday affect on values
+  'upper_window': 3,  # 3 days after holiday affect on values
+})
+
+march8 = pd.DataFrame({
+  'holiday': 'womens day',
+  'ds': pd.to_datetime(['2019-03-08', '2020-03-08', '2021-03-08', '2022-03-08']),
+  'lower_window': -3,  # 3 days before holiday affect on values
+  'upper_window': 1,  # 1 days after holiday affect on values
+})
+
+easter = pd.DataFrame({
+  'holiday': 'easter',
+  'ds': pd.to_datetime(['2019-04-28', '2020-04-19', '2021-05-02', '2022-04-24']),
+  'lower_window': -4,  # 4 days before holiday affect on values
+  'upper_window': 1,  # 1 days after holiday affect on values
+})
+
+
+may1 = pd.DataFrame({
+  'holiday': 'labor day',
+  'ds': pd.to_datetime(['2019-05-10', '2020-05-01', '2021-05-01', '2022-05-01']),
+  'lower_window': -1,  # 1 days before holiday affect on values
+  'upper_window': 6,  # 6 days after holiday affect on values
+})
+
+may9 = pd.DataFrame({
+  'holiday': 'v-day',
+  #'ds': pd.to_datetime(['2019-05-09', '2020-05-09', '2021-05-09', '2022-05-09']),
+  'ds': pd.to_datetime(['2019-05-09', '2021-05-09', '2022-05-09']), #???????????????????????????
+  'lower_window': -3,  # 3 days before holiday affect on values
+  'upper_window': 2,  # 2 days after holiday affect on values
+})
+
+russia_day = pd.DataFrame({
+  'holiday': 'russia day',
+  'ds': pd.to_datetime(['2019-06-12', '2020-06-12', '2021-06-12', '2022-06-12']),
+  'lower_window': -3,  # 3 days before holiday affect on values
+  'upper_window': 3,  # 3 days after holiday affect on values
+})
+
+teachers_day = pd.DataFrame({
+  'holiday': 'teachers day',
+  'ds': pd.to_datetime(['2019-10-05', '2020-10-05', '2021-10-05', '2022-10-05']),
+  'lower_window': -1,  # 1 days before holiday affect on values
+  'upper_window': 0,  # 0 days after holiday affect on values
+})
+
+national_unity_day = pd.DataFrame({
+  'holiday': 'national unity day',
+  'ds': pd.to_datetime(['2019-11-04', '2020-11-04', '2021-11-04', '2021-11-04']),
+  'lower_window': -1,  #  days before holiday affect on values
+  'upper_window': 0, #  days after holiday affect on values
+})
+
+
+# In[ ]:
+
+
+holidays = pd.concat((NY, feb14, feb23, march8, easter, may1, may9, russia_day, teachers_day, national_unity_day))
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
 
 
 submission = pd.read_csv(os.path.join(PATH_DATA, 'sample_submission.csv'), 
@@ -73,19 +168,19 @@ submission = pd.read_csv(os.path.join(PATH_DATA, 'sample_submission.csv'),
 submission.shape
 
 
-# In[15]:
+# In[ ]:
 
 
 submission.head()
 
 
-# In[16]:
+# In[ ]:
 
 
 submission.tail()
 
 
-# In[17]:
+# In[ ]:
 
 
 submission.date.min(), submission.date.max()
@@ -99,7 +194,7 @@ submission.date.min(), submission.date.max()
 
 # Read train data. Set type of all columns to float.
 
-# In[18]:
+# In[ ]:
 
 
 data = pd.read_csv(os.path.join(PATH_DATA, 'train.csv'),
@@ -120,7 +215,7 @@ data.shape
 
 # Get aver over all oktmo (except Ingush in set)
 
-# In[19]:
+# In[ ]:
 
 
 def get_aver(inp_prod, inp_df, ignore_Ingush = True):
@@ -150,18 +245,18 @@ def get_aver(inp_prod, inp_df, ignore_Ingush = True):
 
 
 
-# In[27]:
+# In[ ]:
 
 
 oktmo = data.oktmo.unique()
 #deviation_df = pd.DataFrame(columns = list(items), index = oktmo)
 
 
-# In[20]:
+# In[ ]:
 
 
-if os.path.exists(os.path.join(PATH_DATA, 'deviation_sum_nz.csv')):
-    deviation_df = pd.read_csv(os.path.join(PATH_DATA, 'deviation_sum_nz.csv'),
+if os.path.exists(os.path.join(PATH_DATA, 'deviation_sum_nz_nh_full.csv')):
+    deviation_df = pd.read_csv(os.path.join(PATH_DATA, 'deviation_sum_nz_nh_full.csv'),
 #if os.path.exists(os.path.join(PATH_DATA, 'deviation_mult_nz.csv')):
     #deviation_df = pd.read_csv(os.path.join(PATH_DATA, 'deviation_mult_nz.csv'),
                               index_col = 0,
@@ -182,7 +277,7 @@ if os.path.exists(os.path.join(PATH_DATA, 'deviation_sum_nz.csv')):
 
 # Make future dates from 01.04.2021 to 30.06.2021 
 
-# In[22]:
+# In[ ]:
 
 
 train = get_aver('fruit_value', data)
@@ -190,14 +285,14 @@ X = train.reset_index()[['date', 'fruit_value']]#.columns = ['ds', 'y']
 X.columns=['ds', 'y']
 
 
-# In[23]:
+# In[ ]:
 
 
 model = Prophet(yearly_seasonality=True,daily_seasonality=True)
 model.fit(X)
 
 
-# In[24]:
+# In[ ]:
 
 
 future = model.make_future_dataframe(periods=91)
@@ -210,9 +305,9 @@ future = future[821:]
 
 
 
-# Make models (without saving) and submissions
+# Make models and submissions
 
-# In[28]:
+# In[ ]:
 
 
 for itm in tqdm(items):
@@ -222,7 +317,9 @@ for itm in tqdm(items):
     
     model = Prophet(yearly_seasonality=True, daily_seasonality=True,
                     seasonality_mode='multiplicative',  # hz. future firecast more sharp
-                    #changepoint_prior_scale=0.01,   # 0.1 - 0.15 looks adequately
+                    #changepoint_prior_scale=0.15,   # 0.1 - 0.15 looks adequately
+                    holidays = holidays,
+                    #changepoints=['2020-09-23', '2020-03-09', '2020-10-26'],
                    )
     model.fit(X)
     
@@ -233,10 +330,12 @@ for itm in tqdm(items):
             mult = deviation_df.loc[reg, itm]
             #value = forecast.query('ds == @dt')['yhat'] + mult
             value = forecast.loc[forecast.ds == dt, 'yhat'].values[0] + mult
+            if value < 0:
+                value = 0
             submission.loc[(submission.date == dt) & (submission.oktmo == reg), itm] = value
 
 
-# In[29]:
+# In[ ]:
 
 
 submission.head()
@@ -248,16 +347,16 @@ submission.head()
 
 
 
-# In[30]:
+# In[ ]:
 
 
-submission.to_csv(os.path.join(PATH_SUBM, 'phrop_deviation_sum_nz.csv'))
+submission.to_csv(os.path.join(PATH_SUBM, 'phrop_holid_dev_sum_nz_nh_val_nz_full.csv'))
 
 
 # In[ ]:
 
 
-
+#submission.to_csv(os.path.join(PATH_SUBM, 'phrop_holid_dev_sum_nz_nh_val_nz_cps015_full.csv'))
 
 
 # In[ ]:

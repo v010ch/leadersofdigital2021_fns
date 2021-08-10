@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
+# In[1]:
 
 
 import os
@@ -14,19 +14,19 @@ from pathlib import Path
 import statsmodels.api as sm
 
 
-# In[ ]:
+# In[2]:
 
 
 from oktmo_names import oktmo_names_decode as oktmo_names
 
 
-# In[ ]:
+# In[3]:
 
 
 get_ipython().run_line_magic('pylab', 'inline')
 
 
-# In[ ]:
+# In[4]:
 
 
 PATH_DATA = os.path.join(Path.cwd(), 'data')
@@ -39,7 +39,7 @@ PATH_SUBM = os.path.join(Path.cwd(), 'submissions')
 
 
 
-# In[ ]:
+# In[5]:
 
 
 train = pd.read_csv(os.path.join(PATH_DATA, 'train.csv'),
@@ -58,7 +58,7 @@ for el in items:
 train.shape
 
 
-# In[ ]:
+# In[6]:
 
 
 def get_aver(inp_prod, ignore_Ingush = True):
@@ -72,7 +72,7 @@ def get_aver(inp_prod, ignore_Ingush = True):
     return train[use_cols].groupby('date').mean().sort_values(by='date')
 
 
-# In[ ]:
+# In[7]:
 
 
 def decompose(inp_item, season = []):
@@ -117,13 +117,13 @@ def decompose(inp_item, season = []):
 
 # # pasta - макароны (средняя взвешенная цена), руб/кг
 
-# In[ ]:
+# In[8]:
 
 
 decompose_df = get_aver('pasta')
 
 
-# In[ ]:
+# In[9]:
 
 
 plt.figure(figsize(18,15))

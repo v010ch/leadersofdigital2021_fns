@@ -23,3 +23,29 @@
 ### train only with no zeros in calculate_deviation / train_df in score.
 ### seasonality_mode='multiplicative'
 ### sum   0.007255538811052343    0.1378257392099816     0.0022087250115135123
+
+### train only with no zeros in calculate_deviation / train_df in score.
+### seasonality_mode='multiplicative'
+### sum   0.007255538811052343    0.1378257392099816
+
+### train only with no zeros and no holidays in calculate_deviation / train_df in score.
+### seasonality_mode='multiplicative' + holidays
+### sum   0.005630519592304298 0.177603502413309          0.0021690136158641696
+
+
+### train only with no zeros and no holidays in calculate_deviation / train_df in score.
+### seasonality_mode='multiplicative' + holidays. val > 0
+### sum   0.003645681214459922 0.27429715906966423          0.002176161153470264
+
+
+### full with no zeros and no holidays in calculate_deviation / train_df in score.
+### seasonality_mode='multiplicative' + holidays. val > 0
+### sum                                                    0.0022073156155997717
+
+
+### full with no zeros and no holidays in calculate_deviation / train_df in score.
+### seasonality_mode='multiplicative' + holidays. val > 0. cps = 0.15
+### sum                                                    0.0021403550452949653
+
+
+
