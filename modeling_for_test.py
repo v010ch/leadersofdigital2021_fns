@@ -153,33 +153,6 @@ def get_aver(inp_prod, inp_df, ignore_Ingush = True):
 # In[ ]:
 
 
-def calculate_deviation_v2(inp_prod, inp_df):
-    
-    aver = get_aver(inp_prod, inp_df, True)
-    
-    deviation = {el: 0 for el in inp_df.oktmo.unique()}
-    devider_const = inp_df.query('oktmo == @inp_df.oktmo.unique()[0]').shape[0]
-
-    for reg in inp_df.oktmo.unique():
-        devider = devider_const
-        for idx in inp_df.query('oktmo == @reg').index:
-            if inp_df.loc[idx, inp_prod] > 0:
-                deviation[reg] += (inp_df.loc[idx, inp_prod] - aver.loc[inp_df.loc[idx, 'date']].values[0])
-                #deviation[reg] += (inp_df.loc[idx, inp_prod] / aver.loc[inp_df.loc[idx, 'date']].values[0])
-            else:
-                devider -= 1
-                
-        if devider != 0: 
-            deviation[reg] = deviation[reg] / devider
-        else:
-            deviation[reg] = 0
-            
-    return deviation
-
-
-# In[ ]:
-
-
 holidays.reset_index(inplace = True)
 
 

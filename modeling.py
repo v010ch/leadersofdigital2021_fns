@@ -317,7 +317,7 @@ for itm in tqdm(items):
     
     model = Prophet(yearly_seasonality=True, daily_seasonality=True,
                     seasonality_mode='multiplicative',  # hz. future firecast more sharp
-                    #changepoint_prior_scale=0.15,   # 0.1 - 0.15 looks adequately
+                    changepoint_prior_scale=0.15,   # 0.1 - 0.15 looks adequately
                     holidays = holidays,
                     #changepoints=['2020-09-23', '2020-03-09', '2020-10-26'],
                    )
@@ -350,13 +350,13 @@ submission.head()
 # In[ ]:
 
 
-submission.to_csv(os.path.join(PATH_SUBM, 'phrop_holid_dev_sum_nz_nh_val_nz_full.csv'))
+#submission.to_csv(os.path.join(PATH_SUBM, 'phrop_holid_dev_sum_nz_nh_val_nz_full.csv'))
 
 
 # In[ ]:
 
 
-#submission.to_csv(os.path.join(PATH_SUBM, 'phrop_holid_dev_sum_nz_nh_val_nz_cps015_full.csv'))
+submission.to_csv(os.path.join(PATH_SUBM, 'phrop_holid_dev_sum_nz_nh_val_nz_cps015_full.csv'))
 
 
 # In[ ]:
