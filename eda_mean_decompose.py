@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[10]:
+# In[ ]:
 
 
 import os
@@ -14,19 +14,19 @@ from pathlib import Path
 import statsmodels.api as sm
 
 
-# In[2]:
+# In[ ]:
 
 
 from oktmo_names import oktmo_names_decode as oktmo_names
 
 
-# In[14]:
+# In[ ]:
 
 
 get_ipython().run_line_magic('pylab', 'inline')
 
 
-# In[3]:
+# In[ ]:
 
 
 PATH_DATA = os.path.join(Path.cwd(), 'data')
@@ -39,7 +39,7 @@ PATH_SUBM = os.path.join(Path.cwd(), 'submissions')
 
 
 
-# In[4]:
+# In[ ]:
 
 
 train = pd.read_csv(os.path.join(PATH_DATA, 'train.csv'),
@@ -58,7 +58,7 @@ for el in items:
 train.shape
 
 
-# In[5]:
+# In[ ]:
 
 
 def get_aver(inp_prod, ignore_Ingush = True):
@@ -72,7 +72,7 @@ def get_aver(inp_prod, ignore_Ingush = True):
     return train[use_cols].groupby('date').mean().sort_values(by='date')
 
 
-# In[251]:
+# In[ ]:
 
 
 def decompose(inp_item, season = []):
@@ -117,13 +117,13 @@ def decompose(inp_item, season = []):
 
 # # pasta - макароны (средняя взвешенная цена), руб/кг
 
-# In[74]:
+# In[ ]:
 
 
 decompose_df = get_aver('pasta')
 
 
-# In[76]:
+# In[ ]:
 
 
 plt.figure(figsize(18,15))
@@ -145,7 +145,7 @@ print('')
 
 # # pasta_value - макароны (объем проданной продукции), кг
 
-# In[263]:
+# In[ ]:
 
 
 decompose('pasta_value', [1, 7])
@@ -165,13 +165,13 @@ decompose('pasta_value', [1, 7])
 
 # # legumes - бобовые, руб/кг
 
-# In[71]:
+# In[ ]:
 
 
 decompose_df = get_aver('legumes')
 
 
-# In[73]:
+# In[ ]:
 
 
 # STRANGE
@@ -194,7 +194,7 @@ print('')
 
 # # legumes_value – бобовые (объем проданной продукции), кг
 
-# In[267]:
+# In[ ]:
 
 
 decompose('legumes_value', [1, 7])
@@ -214,13 +214,13 @@ decompose('legumes_value', [1, 7])
 
 # # bread - хлеб , руб/кг
 
-# In[68]:
+# In[ ]:
 
 
 decompose_df = get_aver('bread')
 
 
-# In[70]:
+# In[ ]:
 
 
 # LIGHT
@@ -243,7 +243,7 @@ print('')
 
 # # bread_value – хлеб (объем проданной продукции), кг
 
-# In[271]:
+# In[ ]:
 
 
 decompose('bread_value', [1, 7])
@@ -263,13 +263,13 @@ decompose('bread_value', [1, 7])
 
 # # flour - мука, руб/кг
 
-# In[65]:
+# In[ ]:
 
 
 decompose_df = get_aver('flour')
 
 
-# In[67]:
+# In[ ]:
 
 
 # STRANGE
@@ -292,7 +292,7 @@ print('')
 
 # # flour_value - мука (объем проданной продукции), кг
 
-# In[276]:
+# In[ ]:
 
 
 # LIGHT
@@ -313,13 +313,13 @@ decompose('flour_value', [1, 7])
 
 # # rice – рис, руб/кг
 
-# In[61]:
+# In[ ]:
 
 
 decompose_df = get_aver('rice')
 
 
-# In[63]:
+# In[ ]:
 
 
 # STRANGE
@@ -342,7 +342,7 @@ print('')
 
 # # rice_value – рис (объем проданной продукции), кг
 
-# In[282]:
+# In[ ]:
 
 
 # LIGHT
@@ -363,13 +363,13 @@ decompose('rice_value', [7]) #without 1???
 
 # # groats - другие крупы, руб/кг
 
-# In[58]:
+# In[ ]:
 
 
 decompose_df = get_aver('groats')
 
 
-# In[60]:
+# In[ ]:
 
 
 # ???ELNARGEMENT???
@@ -392,7 +392,7 @@ print('')
 
 # # groats_value – другие крупы (объем проданной продукции), кг
 
-# In[287]:
+# In[ ]:
 
 
 # LIGHT
@@ -413,13 +413,13 @@ decompose('groats_value', [7]) # without 1????
 
 # # potatoes – картофель, руб/кг
 
-# In[52]:
+# In[ ]:
 
 
 decompose_df = get_aver('potatoes')
 
 
-# In[56]:
+# In[ ]:
 
 
 # STRONG ANNUAL SEASONALITY
@@ -442,7 +442,7 @@ print('')
 
 # # potatoes_value – картофель (объем проданной продукции), кг
 
-# In[291]:
+# In[ ]:
 
 
 decompose('potatoes_value', [1, 7])
@@ -462,13 +462,13 @@ decompose('potatoes_value', [1, 7])
 
 # # сucumbers_tomatoes – огурцы и помидоры, руб/кг
 
-# In[292]:
+# In[ ]:
 
 
 decompose_df = get_aver('сucumbers_tomatoes')
 
 
-# In[293]:
+# In[ ]:
 
 
 # STRONG ANNUAL SEASONALITY
@@ -491,7 +491,7 @@ print('')
 
 # # сucumbers_tomatoes_value – огурцы и помидоры (объем проданной продукции), кг
 
-# In[298]:
+# In[ ]:
 
 
 # STRONG AND STRANGE ANNUAL SEASONALITY
@@ -512,13 +512,13 @@ decompose('сucumbers_tomatoes_value', [1, 7])
 
 # # vegetables – прочие овощи, руб/кг
 
-# In[84]:
+# In[ ]:
 
 
 decompose_df = get_aver('vegetables')
 
 
-# In[88]:
+# In[ ]:
 
 
 #STRONG ANNUAL SEASONALITY
@@ -541,7 +541,7 @@ print('')
 
 # # vegetables_value – прочие овощи (объем проданной продукции), кг
 
-# In[302]:
+# In[ ]:
 
 
 #STRANGE
@@ -562,13 +562,13 @@ decompose('vegetables_value', [1, 7])
 
 # # roots – столовые корнеплоды, руб/кг
 
-# In[89]:
+# In[ ]:
 
 
 decompose_df = get_aver('roots')
 
 
-# In[94]:
+# In[ ]:
 
 
 #STRONG ANNUAL AND WEEK SEASONALITY
@@ -591,7 +591,7 @@ print('')
 
 # # roots_value – столовые корнеплоды (объем проданной продукции), кг
 
-# In[306]:
+# In[ ]:
 
 
 decompose('roots_value', [1, 7])
@@ -611,13 +611,13 @@ decompose('roots_value', [1, 7])
 
 # # cabbage – капуста, руб/кг
 
-# In[96]:
+# In[ ]:
 
 
 decompose_df = get_aver('сabbage')
 
 
-# In[99]:
+# In[ ]:
 
 
 # ANNOMAL
@@ -626,7 +626,7 @@ sm.tsa.seasonal_decompose(decompose_df.сabbage).plot()
 print('')
 
 
-# In[101]:
+# In[ ]:
 
 
 # ANNOMAL
@@ -649,7 +649,7 @@ print('')
 
 # # сabbage_value – капуста (объем проданной продукции), кг
 
-# In[312]:
+# In[ ]:
 
 
 decompose('сabbage_value', [1, 7])
@@ -669,13 +669,13 @@ decompose('сabbage_value', [1, 7])
 
 # # fruit – фрукты, руб/кг
 
-# In[102]:
+# In[ ]:
 
 
 decompose_df = get_aver('fruit')
 
 
-# In[105]:
+# In[ ]:
 
 
 # STRANGE AND STRONG ANNUAL SEASONALITY
@@ -698,7 +698,7 @@ print('')
 
 # # fruit_value – фрукты (объем проданной продукции), кг
 
-# In[317]:
+# In[ ]:
 
 
 # LIGHT. STRONG ANNUAL SEASONALITY
@@ -719,13 +719,13 @@ decompose('fruit_value', [1, 7])
 
 # # sugar – сахар, руб/кг
 
-# In[106]:
+# In[ ]:
 
 
 decompose_df = get_aver('sugar')
 
 
-# In[109]:
+# In[ ]:
 
 
 # STRANGE
@@ -748,7 +748,7 @@ print('')
 
 # # sugar_value – сахар (объем проданной продукции), кг
 
-# In[322]:
+# In[ ]:
 
 
 #STRANGE
@@ -769,13 +769,13 @@ decompose('sugar_value', [1, 7])
 
 # # candy – конфеты, руб/кг
 
-# In[110]:
+# In[ ]:
 
 
 decompose_df = get_aver('candy')
 
 
-# In[113]:
+# In[ ]:
 
 
 # LIGHT
@@ -798,7 +798,7 @@ print('')
 
 # # candy_value – конфеты (объем проданной продукции), кг
 
-# In[326]:
+# In[ ]:
 
 
 decompose('candy_value', [1, 7])
@@ -818,13 +818,13 @@ decompose('candy_value', [1, 7])
 
 # # biscuits – печенье, руб/кг
 
-# In[115]:
+# In[ ]:
 
 
 decompose_df = get_aver('biscuits')
 
 
-# In[120]:
+# In[ ]:
 
 
 # LIGHT. STRONG WEEKLY SEASONALITY
@@ -847,7 +847,7 @@ print('')
 
 # # biscuits_value – печенье (объем проданной продукции), кг
 
-# In[331]:
+# In[ ]:
 
 
 # STRAGNE
@@ -868,13 +868,13 @@ decompose('biscuits_value', [1, 7])
 
 # # mutton – баранина, руб/кг
 
-# In[121]:
+# In[ ]:
 
 
 decompose_df = get_aver('mutton')
 
 
-# In[132]:
+# In[ ]:
 
 
 # STRONG WEEK SEASONALITY
@@ -897,7 +897,7 @@ print('')
 
 # # mutton_value – баранина (объем проданной продукции), кг
 
-# In[335]:
+# In[ ]:
 
 
 # STRANGE
@@ -918,13 +918,13 @@ decompose('mutton_value', [1, 7])
 
 # # beef – говядина, руб/кг
 
-# In[133]:
+# In[ ]:
 
 
 decompose_df = get_aver('beef')
 
 
-# In[136]:
+# In[ ]:
 
 
 # LIGHT
@@ -947,7 +947,7 @@ print('')
 
 # # beef_value – говядина (объем проданной продукции), кг
 
-# In[342]:
+# In[ ]:
 
 
 decompose('beef_value', [1, 7])
@@ -967,13 +967,13 @@ decompose('beef_value', [1, 7])
 
 # # chiken – мясо птицы, руб/кг
 
-# In[137]:
+# In[ ]:
 
 
 decompose_df = get_aver('chicken')
 
 
-# In[141]:
+# In[ ]:
 
 
 # STRANGE
@@ -996,7 +996,7 @@ print('')
 
 # # chicken_value – мясо птицы(объем проданной продукции), кг
 
-# In[346]:
+# In[ ]:
 
 
 decompose('chicken_value', [1, 7])
@@ -1016,13 +1016,13 @@ decompose('chicken_value', [1, 7])
 
 # # pork – свинина, руб/кг
 
-# In[142]:
+# In[ ]:
 
 
 decompose_df = get_aver('pork')
 
 
-# In[145]:
+# In[ ]:
 
 
 #STRANGE
@@ -1045,7 +1045,7 @@ print('')
 
 # # pork_value – свинина (объем проданной продукции), кг
 
-# In[350]:
+# In[ ]:
 
 
 decompose('pork_value', [1, 7])
@@ -1065,13 +1065,13 @@ decompose('pork_value', [1, 7])
 
 # # fish – рыба свеж, руб/кг
 
-# In[146]:
+# In[ ]:
 
 
 decompose_df = get_aver('fish')
 
 
-# In[150]:
+# In[ ]:
 
 
 # LIGHT
@@ -1094,7 +1094,7 @@ print('')
 
 # # fish_value – рыба свеж (объем проданной продукции), кг
 
-# In[354]:
+# In[ ]:
 
 
 decompose('fish_value', [1, 7])
@@ -1114,13 +1114,13 @@ decompose('fish_value', [1, 7])
 
 # # herring – сельдь, руб/кг
 
-# In[151]:
+# In[ ]:
 
 
 decompose_df = get_aver('herring')
 
 
-# In[154]:
+# In[ ]:
 
 
 # STRONG ANNUAL SEASONALITY
@@ -1143,7 +1143,7 @@ print('')
 
 # # herring_value – сельдь (объем проданной продукции), кг
 
-# In[359]:
+# In[ ]:
 
 
 # LIGHT
@@ -1164,13 +1164,13 @@ decompose('herring_value', [1, 7])
 
 # # curd – творог, руб/кг
 
-# In[155]:
+# In[ ]:
 
 
 decompose_df = get_aver('curd')
 
 
-# In[159]:
+# In[ ]:
 
 
 plt.figure(figsize(18,15))
@@ -1192,7 +1192,7 @@ print('')
 
 # # curd_value – творог (объем проданной продукции), кг
 
-# In[363]:
+# In[ ]:
 
 
 # STRANGE
@@ -1213,13 +1213,13 @@ decompose('curd_value', [1, 7])
 
 # # sour_creame – сметана, руб/кг
 
-# In[365]:
+# In[ ]:
 
 
 decompose_df = get_aver('sour_creame')
 
 
-# In[367]:
+# In[ ]:
 
 
 # STRANGE
@@ -1243,7 +1243,7 @@ print('')
 
 # # sour_creame_value – сметана (объем проданной продукции), кг
 
-# In[373]:
+# In[ ]:
 
 
 #STRANGE
@@ -1264,13 +1264,13 @@ decompose('sour_creame_value', [1, 7])
 
 # # butter – масло сливочное, руб/кг
 
-# In[167]:
+# In[ ]:
 
 
 decompose_df = get_aver('butter')
 
 
-# In[170]:
+# In[ ]:
 
 
 plt.figure(figsize(18,15))
@@ -1292,7 +1292,7 @@ print('')
 
 # # butter_value – масло сливочное (объем проданной продукции), кг
 
-# In[377]:
+# In[ ]:
 
 
 #STRANGE
@@ -1313,13 +1313,13 @@ decompose('butter_value', [1, 7])
 
 # # milk_kefir – молоко кефир, руб/л
 
-# In[177]:
+# In[ ]:
 
 
 decompose_df = get_aver('milk_kefir')
 
 
-# In[180]:
+# In[ ]:
 
 
 plt.figure(figsize(18,15))
@@ -1341,7 +1341,7 @@ print('')
 
 # # milk_kefir_value –молоко кефир (объем проданной продукции), л
 
-# In[383]:
+# In[ ]:
 
 
 #STRANGE
@@ -1362,13 +1362,13 @@ decompose('milk_kefir_value', [1, 7])
 
 # # cheese – сыр, руб/кг
 
-# In[181]:
+# In[ ]:
 
 
 decompose_df = get_aver('cheese')
 
 
-# In[184]:
+# In[ ]:
 
 
 # LIGHT
@@ -1391,7 +1391,7 @@ print('')
 
 # # cheese_value – сыр (объем проданной продукции), кг
 
-# In[390]:
+# In[ ]:
 
 
 # LIGHT
@@ -1412,13 +1412,13 @@ decompose('cheese_value', [1, 7])
 
 # # egg – яйца, руб/шт
 
-# In[185]:
+# In[ ]:
 
 
 decompose_df = get_aver('egg')
 
 
-# In[189]:
+# In[ ]:
 
 
 # STRANGE
@@ -1441,7 +1441,7 @@ print('')
 
 # # egg_value – яйца (объем проданной продукции), шт
 
-# In[394]:
+# In[ ]:
 
 
 decompose('egg_value', [1, 7])
@@ -1461,13 +1461,13 @@ decompose('egg_value', [1, 7])
 
 # # margarin – маргарин и другие жиры, руб/кг
 
-# In[191]:
+# In[ ]:
 
 
 decompose_df = get_aver('margarine')
 
 
-# In[194]:
+# In[ ]:
 
 
 plt.figure(figsize(18,15))
@@ -1489,7 +1489,7 @@ print('')
 
 # # margarine_value – маргарин и другие жиры (объем проданной продукции), кг
 
-# In[398]:
+# In[ ]:
 
 
 #STRANGE
@@ -1510,13 +1510,13 @@ decompose('margarine_value', [1, 7])
 
 # # oil – масло раститительное, руб/л
 
-# In[195]:
+# In[ ]:
 
 
 decompose_df = get_aver('oil')
 
 
-# In[198]:
+# In[ ]:
 
 
 plt.figure(figsize(18,15))
@@ -1538,7 +1538,7 @@ print('')
 
 # # oil_value – масло раститительное (объем проданной продукции), л
 
-# In[402]:
+# In[ ]:
 
 
 decompose('oil_value', [1, 7])
@@ -1558,13 +1558,13 @@ decompose('oil_value', [1, 7])
 
 # # salt – соль, руб/кг
 
-# In[199]:
+# In[ ]:
 
 
 decompose_df = get_aver('salt')
 
 
-# In[202]:
+# In[ ]:
 
 
 plt.figure(figsize(18,15))
@@ -1586,7 +1586,7 @@ print('')
 
 # # salt_value – соль (объем проданной продукции)        , кг
 
-# In[406]:
+# In[ ]:
 
 
 #STRANGE
@@ -1607,13 +1607,13 @@ decompose('salt_value', [1, 7])
 
 # # spice – специи, руб/шт
 
-# In[203]:
+# In[ ]:
 
 
 decompose_df = get_aver('spice')
 
 
-# In[208]:
+# In[ ]:
 
 
 # STRANGE
@@ -1636,7 +1636,7 @@ print('')
 
 # # spice_value – специи (объем проданной продукции), шт
 
-# In[410]:
+# In[ ]:
 
 
 #STRANGE
@@ -1657,13 +1657,13 @@ decompose('spice_value', [1, 7])
 
 # # tea – чай, руб/шт
 
-# In[210]:
+# In[ ]:
 
 
 decompose_df = get_aver('tea')
 
 
-# In[213]:
+# In[ ]:
 
 
 plt.figure(figsize(18,15))
@@ -1685,7 +1685,7 @@ print('')
 
 # # tea_value – чай (объем проданной продукции), шт
 
-# In[414]:
+# In[ ]:
 
 
 #STRANGE
@@ -1706,13 +1706,13 @@ decompose('tea_value', [1, 7])
 
 # # cpi_1
 
-# In[214]:
+# In[ ]:
 
 
 decompose_df = get_aver('cpi_1')
 
 
-# In[217]:
+# In[ ]:
 
 
 # STRONG ANNUAL SEASONALITY
@@ -1741,13 +1741,13 @@ print('')
 
 # # cpi_2
 
-# In[220]:
+# In[ ]:
 
 
 decompose_df = get_aver('cpi_2')
 
 
-# In[224]:
+# In[ ]:
 
 
 # STRONG ANNUAL SEASONALITY
@@ -1776,13 +1776,13 @@ print('')
 
 # # cpi_3
 
-# In[225]:
+# In[ ]:
 
 
 decompose_df = get_aver('cpi_3')
 
 
-# In[228]:
+# In[ ]:
 
 
 # STRONG ANNUAL SEASONALITY
@@ -1805,14 +1805,14 @@ print('')
 
 # # ai92 – бензин марки АИ-92, руб/литр
 
-# In[420]:
+# In[ ]:
 
 
 # ANOMAL
 decompose('ai92', )
 
 
-# In[424]:
+# In[ ]:
 
 
 decompose('ai92', [1])
@@ -1832,7 +1832,7 @@ decompose('ai92', [1])
 
 # # ai92_value – бензин марки АИ-92 (объем проданной продукции), литр
 
-# In[428]:
+# In[ ]:
 
 
 #STRANGE
@@ -1853,14 +1853,14 @@ decompose('ai92_value', [1, 7])
 
 # # ai95 – бензин марки АИ-95, руб/литр
 
-# In[429]:
+# In[ ]:
 
 
 # ANOMAL
 decompose('ai95')
 
 
-# In[433]:
+# In[ ]:
 
 
 decompose('ai95', [1, 7])
@@ -1880,7 +1880,7 @@ decompose('ai95', [1, 7])
 
 # # ai95_value – бензин марки АИ-95 (объем проданной продукции), литр
 
-# In[437]:
+# In[ ]:
 
 
 decompose('ai95_value', [1, 7])
@@ -1900,14 +1900,14 @@ decompose('ai95_value', [1, 7])
 
 # # ai98 – бензин марки АИ-98, руб/литр
 
-# In[438]:
+# In[ ]:
 
 
 # ANOMAL
 decompose('ai98')
 
 
-# In[441]:
+# In[ ]:
 
 
 # ANOMAL
@@ -1928,7 +1928,7 @@ decompose('ai98', [1, 7])
 
 # # ai98_value – бензин марки АИ-98 (объем проданной продукции), литр
 
-# In[446]:
+# In[ ]:
 
 
 # STRANGE
@@ -1949,14 +1949,14 @@ decompose('ai98_value', [1, 7])
 
 # # dt – дизельное топливо, руб/литр 
 
-# In[448]:
+# In[ ]:
 
 
 # ANOMAL
 decompose('dt')
 
 
-# In[453]:
+# In[ ]:
 
 
 decompose('dt', [1])
@@ -1976,7 +1976,7 @@ decompose('dt', [1])
 
 # # dt_value – дизельное топливо (объем проданной продукции), литр
 
-# In[457]:
+# In[ ]:
 
 
 decompose('dt_value', [1, 7])
