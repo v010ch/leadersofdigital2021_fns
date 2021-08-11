@@ -32,6 +32,8 @@ from prophet.plot import add_changepoints_to_plot
 
 
 from oktmo_names import oktmo_names_decode as oktmo_names
+from fns_holidays import all_holidays
+from individual_models import individual_models
 
 
 # In[ ]:
@@ -153,13 +155,13 @@ def get_aver(inp_prod, inp_df, ignore_Ingush = True):
 # In[ ]:
 
 
-holidays.reset_index(inplace = True)
+all_holidays.reset_index(inplace = True)
 
 
 # In[ ]:
 
 
-holidays.loc[el, 'lower_window']
+
 
 
 # In[ ]:
@@ -167,12 +169,12 @@ holidays.loc[el, 'lower_window']
 
 holiday_except = list()
 #one_day = np.da
-for el in holidays.index:
-    cur_date = holidays.loc[el, 'ds']
-    for before in range(abs(holidays.loc[el, 'lower_window'])):
+for el in all_holidays.index:
+    cur_date = all_holidays.loc[el, 'ds']
+    for before in range(abs(all_holidays.loc[el, 'lower_window'])):
         holiday_except.append(cur_date - before * np.timedelta64(1,'D'))
     
-    for after in range(abs(holidays.loc[el, 'upper_window'])):
+    for after in range(abs(all_holidays.loc[el, 'upper_window'])):
         holiday_except.append(cur_date + after * np.timedelta64(1,'D'))
 
 
@@ -232,8 +234,8 @@ deviation_df = pd.DataFrame(columns = list(items), index = oktmo)
 
 
 for itm in tqdm(items):
-    #temp = calculate_deviation_v3(itm, train_df)
-    temp = calculate_deviation_v2(itm, data2)
+    temp = calculate_deviation_v3(itm, train_df)
+    #temp = calculate_deviation_v3(itm, data2)
     for el in temp.keys():
         deviation_df.loc[el, itm] = temp[el]
         
@@ -269,7 +271,7 @@ deviation_df.to_csv(os.path.join(PATH_DATA, 'deviation_sum_nz_nh_full.csv'))
 
 
 if os.path.exists(os.path.join(PATH_DATA, 'deviation_sum_nz_nh_part.csv')):
-    deviation_df = pd.read_csv(os.path.join(PATH_DATA, 'deviation_sum_nz_part.csv'),
+    deviation_df = pd.read_csv(os.path.join(PATH_DATA, 'deviation_sum_nz_nh_part.csv'),
 #if os.path.exists(os.path.join(PATH_DATA, 'deviation_mult_nz.csv')):
     #deviation_df = pd.read_csv(os.path.join(PATH_DATA, 'deviation_mult_nz.csv'),
                               index_col = 0,
@@ -332,6 +334,8 @@ future = future[train_df.date.unique().shape[0]:]
 
 
 ej = list()
+ej_df = pd.DataFrame(columns = list(items), index = oktmo)
+
 for itm in tqdm(items):
     train = get_aver(itm, train_df)
     X = train.reset_index()[['date', itm]]#.columns = ['ds', 'y']
@@ -339,8 +343,8 @@ for itm in tqdm(items):
     
     model = Prophet(yearly_seasonality=True, daily_seasonality=True,
                     seasonality_mode='multiplicative',  # hz. future firecast more sharp
-                    #changepoint_prior_scale=0.01,   # 0.1 - 0.15 looks adequately
-                    holidays = holidays,
+                    #changepoint_prior_scale=0.15,   # 0.1 - 0.15 looks adequately
+                    holidays = all_holidays,
                     #changepoints=['2020-09-23', '2020-03-09', '2020-10-26'],
                    )
     #model.add_country_holidays(country_name='RUS')
@@ -350,13 +354,21 @@ for itm in tqdm(items):
     
     for reg in oktmo:
         mult = deviation_df.loc[reg, itm]
-        #val = forecast.yhat.values + mult
-        #val = list(map(lambda x: x if x >=0 else 0, val))
-        v_mae_j  = mean_absolute_error( test_df.loc[test_df.oktmo == reg, itm], forecast.yhat.values + mult)
+        val = forecast.yhat.values + mult
+        val = list(map(lambda x: x if x >=0 else 0, val))
+        #v_mae_j  = mean_absolute_error( test_df.loc[test_df.oktmo == reg, itm], forecast.yhat.values + mult)
         #v_mae_j  = mean_absolute_error( test_df.loc[test_df.oktmo == reg, itm], forecast.yhat.values * mult)
-        #v_mae_j  = mean_absolute_error( test_df.loc[test_df.oktmo == reg, itm], val)
-        v_mean_j  = np.mean(forecast.yhat.values + mult)
-        ej.append(v_mae_j / v_mean_j)
+        v_mae_j  = mean_absolute_error( test_df.loc[test_df.oktmo == reg, itm], val)
+        v_mean_j  = np.mean(val)
+        #v_mean_j  = np.mean(forecast.yhat.values + mult)
+        if v_mean_j == 0:
+            ej.append(55.55555555)
+            ej_df.loc[reg, itm] = 55.55555555
+        else:
+            ej.append(v_mae_j / v_mean_j)
+            ej_df.loc[reg, itm] = (v_mae_j / v_mean_j)
+        
+         
 
 
 # In[ ]:
@@ -375,7 +387,233 @@ print(score, e_mean)
 # In[ ]:
 
 
-0.003645681214459922 0.27429715906966423
+e_mean = ej_df.mean().mean()
+score  = 1 / (1000 * e_mean)
+
+
+# In[ ]:
+
+
+print(score, e_mean)
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+ej_df.to_csv(os.path.join(PATH_DATA, 'ej_part.csv'))
+#ej_df.to_csv(os.path.join(PATH_DATA, 'ej_full.csv'))
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+def get_aver_v2(inp_prod, inp_df, ignore = set()):
+    
+    use_cols = ['date', inp_prod, 'oktmo']
+    #ignore_oktmo = oktmo_names[26000000000]
+    return inp_df[use_cols].query('oktmo not in @ignore')[['date', inp_prod]].groupby('date').mean().sort_values(by='date')    
+
+
+# In[ ]:
+
+
+def calculate_deviation_v4(inp_prod, inp_df):
+    
+    aver = get_aver_v2(inp_prod, inp_df, individual_models[inp_prod])
+    
+    deviation = {el: 0 for el in inp_df.oktmo.unique()}
+    devider_const = inp_df.query('oktmo == @inp_df.oktmo.unique()[0]').shape[0]
+    
+    #regions = oktmo.copy()
+    #for el in individual_models[inp_prod]:
+    #    regions = (np.delete(regions, np.where(regions == el)))
+    
+    for reg in inp_df.oktmo.unique():
+    #for reg in regions:
+        devider = devider_const
+        for idx in inp_df.query('oktmo == @reg').index:
+            if inp_df.loc[idx, inp_prod] > 0 and (inp_df.loc[idx, 'date'] not in holiday_except):
+                deviation[reg] += (inp_df.loc[idx, inp_prod] - aver.loc[inp_df.loc[idx, 'date']].values[0])
+                #deviation[reg] += (inp_df.loc[idx, inp_prod] / aver.loc[inp_df.loc[idx, 'date']].values[0])
+            else:
+                devider -= 1
+                
+        if devider != 0: 
+            deviation[reg] = deviation[reg] / devider
+        else:
+            deviation[reg] = 0
+            
+    return deviation
+
+
+# In[ ]:
+
+
+oktmo = data2.oktmo.unique()
+deviation_df = pd.DataFrame(columns = list(items), index = oktmo)
+
+
+# In[ ]:
+
+
+for itm in tqdm(items):
+    #temp = calculate_deviation_v4(itm, train_df)
+    temp = calculate_deviation_v4(itm, data2)
+    for el in temp.keys():
+        deviation_df.loc[el, itm] = temp[el]
+
+
+# In[ ]:
+
+
+deviation_df.to_csv(os.path.join(PATH_DATA, 'deviation_500_sum_short_full.csv'))
+
+
+# In[ ]:
+
+
+if os.path.exists(os.path.join(PATH_DATA, 'deviation_500_sum_short_part.csv')):
+    deviation_df = pd.read_csv(os.path.join(PATH_DATA, 'deviation_500_sum_short_part.csv'),
+#if os.path.exists(os.path.join(PATH_DATA, 'deviation_mult_nz.csv')):
+    #deviation_df = pd.read_csv(os.path.join(PATH_DATA, 'deviation_mult_nz.csv'),
+                              index_col = 0,
+                              )
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+ej_df = pd.DataFrame(columns = list(items), index = oktmo)
+
+for itm in tqdm(items):
+    #train = get_aver_v2(itm, train_df)
+    X = get_aver_v2(itm, train_df, individual_models[itm])
+    X = X.reset_index()[['date', itm]]#.columns = ['ds', 'y']
+    X.columns=['ds', 'y']
+    
+    model = Prophet(yearly_seasonality=True, daily_seasonality=True,
+                    seasonality_mode='multiplicative',  # hz. future firecast more sharp
+                    #changepoint_prior_scale=0.15,   # 0.1 - 0.15 looks adequately
+                    holidays = all_holidays,
+                    #changepoints=['2020-09-23', '2020-03-09', '2020-10-26'],
+                   )
+    #model.add_country_holidays(country_name='RUS')
+    model.fit(X)
+    
+    forecast = model.predict(future)
+    
+    
+    regions = oktmo.copy()
+    for el in individual_models[itm]:
+        regions = (np.delete(regions, np.where(regions == el)))
+    
+    for reg in regions:
+        
+        mult = deviation_df.loc[reg, itm]
+        val = forecast.yhat.values + mult
+        #val = forecast.yhat.values * mult
+        val = list(map(lambda x: x if x >=0 else 0, val))
+
+        if reg == 26000000000:
+            val = val * 0
+            
+        v_mae_j  = mean_absolute_error( test_df.loc[test_df.oktmo == reg, itm], val)
+        v_mean_j  = np.mean(val)
+        if v_mean_j == 0:
+            ej_df.loc[reg, itm] = 55.55555555
+        else:
+            ej_df.loc[reg, itm] = (v_mae_j / v_mean_j)
+
+
+# In[ ]:
+
+
+for itm in tqdm(items):
+    for reg in individual_models[itm]:
+        X = train_df.loc[train_df.oktmo == reg, ['date', itm]]
+        X = X.reset_index()[['date', itm]]
+        X.columns=['ds', 'y']
+        
+        model = Prophet(yearly_seasonality=True, daily_seasonality=True,
+                seasonality_mode='multiplicative',  # hz. future firecast more sharp
+                #changepoint_prior_scale=0.15,   # 0.1 - 0.15 looks adequately
+                holidays = all_holidays,
+                #changepoints=['2020-09-23', '2020-03-09', '2020-10-26'],
+               )
+        model.fit(X)
+        forecast = model.predict(future)
+
+        if reg == 26000000000:
+            forecast.yhat = forecast.yhat * 0
+
+        v_mae_j  = mean_absolute_error( test_df.loc[test_df.oktmo == reg, itm], forecast.yhat.values)
+        v_mean_j  = np.mean(forecast.yhat.values)
+
+        if v_mean_j == 0:
+            ej_df.loc[reg, itm] = 55.55555555
+        else:
+            ej_df.loc[reg, itm] = (v_mae_j / v_mean_j)
+
+
+# In[ ]:
+
+
+e_mean2 = ej_df.mean().mean()
+score2  = 1 / (1000 * e_mean2)
+
+
+# In[ ]:
+
+
+print(score2, e_mean2)
+
+
+# In[ ]:
+
+
+print(score, e_mean)
+
+
+# In[ ]:
+
+
+ej_df.to_csv(os.path.join(PATH_DATA, 'ej_part_upd500.csv'))
 
 
 # In[ ]:

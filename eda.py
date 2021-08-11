@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[ ]:
 
 
 import os
@@ -10,7 +10,7 @@ import pandas as pd
 import scipy.stats as sts
 
 
-# In[2]:
+# In[ ]:
 
 
 from pathlib import Path
@@ -18,19 +18,19 @@ from itertools import product
 from collections import Counter
 
 
-# In[3]:
+# In[ ]:
 
 
 import plotly.express as px
 
 
-# In[4]:
+# In[ ]:
 
 
 from oktmo_names import oktmo_names_decode as oktmo_names
 
 
-# In[5]:
+# In[ ]:
 
 
 PATH_DATA = os.path.join(Path.cwd(), 'data')
@@ -40,13 +40,7 @@ PATH_SUBM = os.path.join(Path.cwd(), 'submissions')
 # In[ ]:
 
 
-
-
-
-# In[ ]:
-
-
-
+import numpy as np
 
 
 # In[ ]:
@@ -57,7 +51,7 @@ PATH_SUBM = os.path.join(Path.cwd(), 'submissions')
 
 # # Подготовка данных
 
-# In[6]:
+# In[ ]:
 
 
 #train = pd.read_csv(os.path.join(PATH_DATA, 'train_orig.csv'), sep = ';', encoding = 'utf-8', engine='python')
@@ -72,7 +66,7 @@ train = pd.read_csv(os.path.join(PATH_DATA, 'train.csv'),
 train.shape
 
 
-# In[7]:
+# In[ ]:
 
 
 train.tail()
@@ -90,14 +84,14 @@ train.tail()
 
 
 
-# In[8]:
+# In[ ]:
 
 
 items = train.columns.drop(['region', 'oktmo', 'okato', 'date'])
 items
 
 
-# In[9]:
+# In[ ]:
 
 
 for el in items:
@@ -106,10 +100,10 @@ for el in items:
 
 train['weekday'] = train.date.map(lambda x: x.weekday())
 train.weekday.value_counts()
-# In[10]:
+# In[ ]:
 
 
-train.info()
+#train.info()
 
 
 # In[ ]:
@@ -130,21 +124,21 @@ train.info()
 
 
 
-# In[11]:
+# In[ ]:
 
 
 regs = train.region.unique()
 regs
 
 
-# In[12]:
+# In[ ]:
 
 
 oktmo = train.oktmo.unique()
 oktmo
 
 
-# In[13]:
+# In[ ]:
 
 
 items = train.columns.drop(['region', 'oktmo', 'okato', 'date'])
@@ -163,10 +157,10 @@ with open(os.path.join(PATH_DATA, 'products.csv'), 'w') as fd:
 
 # оценка отношений/схожести среднего по всем регионам и значений в каждом регионе в разрезе продукта
 
-# In[14]:
+# In[ ]:
 
 
-def graph_research_products(inp_item):
+def graph_research_products(inp_item, inp_oktmo = None):
     print(inp_item)
     
     use_cols = ['oktmo', 'date'] + [inp_item]
@@ -175,6 +169,16 @@ def graph_research_products(inp_item):
     fig.show()
     
     Xaver = train[use_cols].groupby('date').mean().sort_values(by='date')
+    
+    if inp_oktmo:
+        X = train[use_cols].query('oktmo == @inp_oktmo').sort_values(by='date')
+        fig = px.line(y = X[inp_item], x = X.date)#, title='region vs aver')
+        fig.add_scatter(y = Xaver[inp_item], x = Xaver.index, name = 'aver')
+        #fig.add_scatter(y = Xaver[inp_item], x = Xaver.index, name = 'aver')
+        fig.show()
+        
+        return
+    
     
     #for reg_id in regs[0:10]:
     for reg_id in oktmo:
@@ -187,10 +191,11 @@ def graph_research_products(inp_item):
         fig.add_scatter(y = Xaver[inp_item], x = Xaver.index, name = 'aver')
         #fig.add_scatter(y = Xaver[inp_item], x = Xaver.index, name = 'aver')
         fig.show()
-        
+    
+    return
 
 
-# In[66]:
+# In[ ]:
 
 
 #graph_research_products(items[0])
@@ -199,7 +204,7 @@ def graph_research_products(inp_item):
 # In[ ]:
 
 
-
+graph_research_products('pasta_value', 11800000000 )
 
 
 # In[ ]:
@@ -216,7 +221,7 @@ def graph_research_products(inp_item):
 
 # оценка отношений/схожести среднего по всем регионам и значений в каждом регионе в разрезе региона
 
-# In[42]:
+# In[ ]:
 
 
 def graph_research_region(inp_reg):
@@ -237,10 +242,10 @@ def graph_research_region(inp_reg):
         fig.show()
 
 
-# In[43]:
+# In[ ]:
 
 
-graph_research_region(71000000000)
+#graph_research_region(26000000000)
 
 
 # In[ ]:
@@ -251,7 +256,7 @@ graph_research_region(71000000000)
 
 # графики средних значений по всем продуктам
 
-# In[15]:
+# In[ ]:
 
 
 def graph_all_prod_aver():
@@ -269,7 +274,7 @@ def graph_all_prod_aver():
         fig.show()
 
 
-# In[16]:
+# In[ ]:
 
 
 graph_all_prod_aver()
@@ -304,8 +309,37 @@ get_ipython().run_cell_magic('time', '', "\n#!!!!! CATCH WARNING AS ERROR\n\n\nc
 # In[ ]:
 
 
-fig = px.imshow(corr_df.drop(['region'], axis = 1).values,
-               width=1200, height=1200)
+corr_df.drop(['region'], axis = 1)
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+THRESHOLD = 0.1
+heat = corr_df.drop(['region'], axis = 1).copy()
+#for el in heat.columns:
+#     heat[el] = heat[el].map(lambda x: x if x < THRESHOLD else np.nan)
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+#fig = px.imshow(corr_df.drop(['region'], axis = 1).values,
+fig = px.imshow(heat.values,
+               width=1200, height=1200
+               )
 #fig.update_layout(
 #    xaxis = dict(
 #        tickmode = 'array',
@@ -340,15 +374,63 @@ with pd.ExcelWriter(os.path.join(Path.cwd(), 'notes.xlsx'), engine="openpyxl") a
 
 
 
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+corr_df = pd.read_excel(os.path.join(Path.cwd(), 'notes.xlsx'), sheet_name = 'corr', index_col = 0)
+
+
+# In[ ]:
+
+
+corr_df.drop(['region'], axis = 1).values
+
+
+# In[ ]:
+
+
+#sum(corr_df.drop(['region'], axis = 1) < 0.6)
+
+
+# In[ ]:
+
+
+corr_df.pasta.shape
+
+
+# In[ ]:
+
+
+sum(sum(corr_df.drop(['region', 'weekday'], axis = 1).values < 0.4))
+
+
+# In[ ]:
+
+
+(22*60+9) / 100
+
+
+# In[ ]:
+
+
+(14*1350) / 60 / 60
+
+
 # ### Нули
 
-# In[51]:
+# In[ ]:
 
 
 get_ipython().run_cell_magic('time', '', "ttl = len(train.date.unique())\n\nzeros_df = pd.DataFrame(columns = ['region'] + list(items), index = oktmo)\nzeros_df['region'] = zeros_df.index.map(lambda x: oktmo_names[x])\n\nfor item, el in product(items, oktmo):\n    #zeros_values = train.query('oktmo == @el and @item == 0').pasta.shape[0]\n    zeros_values = sum(train.query('oktmo == @el')[item] == 0)\n    zeros_df.loc[el, item] = zeros_values/ttl\n    #if zeros_values > 0:\n    #    print(f'{zeros_values/ttl:.04f}', oktmo_names[el])\n    #break")
 
 
-# In[65]:
+# In[ ]:
 
 
 fig = px.imshow(zeros_df.drop(['region'], axis = 1).values,
@@ -360,7 +442,7 @@ fig.show()
 #zeros_df.to_csv(os.path.join(PATH_DATA, 'train_orig.csv'))
 zeros_df.to_excel(os.path.join(Path.cwd(), 'notes.xlsx'),
                  sheet_name = 'zeros')
-# In[53]:
+# In[ ]:
 
 
 with pd.ExcelWriter(os.path.join(Path.cwd(), 'notes.xlsx'), mode='a', engine="openpyxl") as writer:  
@@ -402,25 +484,25 @@ for id in range(20, 30):
 
 # ### Пропуски в датах
 
-# In[22]:
+# In[ ]:
 
 
 el = 71000000000
 
 
-# In[25]:
+# In[ ]:
 
 
 train.query('oktmo == @el')['pasta'].dropna().shape
 
 преобразовать в dataframe. считать null
-# In[29]:
+# In[ ]:
 
 
 get_ipython().run_cell_magic('time', '', "ttl = len(train.date.unique())\n\nna_df = pd.DataFrame(columns = ['region'] + list(items), index = oktmo)\nna_df['region'] = na_df.index.map(lambda x: oktmo_names[x])\n\nfor item, el in product(items, oktmo):\n    #na_values = sum(train.query('oktmo == @el')[item] == 0)\n    na_values = ttl - train.query('oktmo == @el')[item].dropna().shape[0]\n    na_df.loc[el, item] = na_values/ttl")
 
 
-# In[30]:
+# In[ ]:
 
 
 fig = px.imshow(na_df.drop(['region'], axis = 1).values,
@@ -435,7 +517,7 @@ fig.show()
 
 
 
-# In[31]:
+# In[ ]:
 
 
 with pd.ExcelWriter(os.path.join(Path.cwd(), 'notes.xlsx'), mode='a', engine="openpyxl") as writer:  
@@ -507,6 +589,23 @@ for cur_item in items:
 
 
 
+# # Ej
+
+# In[ ]:
+
+
+ej = pd.read_csv(os.path.join(PATH_DATA, 'ej_full.csv'), index_col = 0)
+
+
+# In[ ]:
+
+
+fig = px.imshow(ej.values,
+               width=1200, height=1200
+               )
+fig.show()
+
+
 # In[ ]:
 
 
@@ -516,31 +615,17 @@ for cur_item in items:
 # In[ ]:
 
 
-
-
-
-# In[ ]:
-
-
-
+#ej_p = pd.read_csv(os.path.join(PATH_DATA, 'ej_part.csv'), index_col = 0)
+ej_p = pd.read_csv(os.path.join(PATH_DATA, 'ej_part_upd.csv'), index_col = 0)
 
 
 # In[ ]:
 
 
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
+fig = px.imshow(ej_p.values,
+               width=1200, height=1200
+               )
+fig.show()
 
 
 # In[ ]:
