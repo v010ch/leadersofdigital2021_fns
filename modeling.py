@@ -320,7 +320,7 @@ submission.query('oktmo == 26000000000').head()
 # In[ ]:
 
 
-submission.to_csv(os.path.join(PATH_SUBM, 'many_500_full_full_zn_nh_izero.csv'))
+submission.to_csv(os.path.join(PATH_SUBM, 'many_500_full_full_zn_izero.csv'))
 
 
 # In[ ]:

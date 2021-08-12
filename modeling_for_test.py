@@ -462,7 +462,7 @@ def calculate_deviation_v4(inp_prod, inp_df):
     #for reg in regions:
         devider = devider_const
         for idx in inp_df.query('oktmo == @reg').index:
-            if inp_df.loc[idx, inp_prod] > 0 and (inp_df.loc[idx, 'date'] not in holiday_except):
+            if inp_df.loc[idx, inp_prod] > 0: # and (inp_df.loc[idx, 'date'] not in holiday_except):
                 deviation[reg] += (inp_df.loc[idx, inp_prod] - aver.loc[inp_df.loc[idx, 'date']].values[0])
                 #deviation[reg] += (inp_df.loc[idx, inp_prod] / aver.loc[inp_df.loc[idx, 'date']].values[0])
             else:
@@ -519,6 +519,34 @@ if os.path.exists(os.path.join(PATH_DATA, 'deviation_500_sum_short_part.csv')):
 # In[ ]:
 
 
+
+
+
+# In[ ]:
+
+
+X = get_aver_v2('fruit_value', train_df, individual_models['fruit_value'])
+X = X.reset_index()[['date', 'fruit_value']]
+X.columns=['ds', 'y']
+
+
+# In[ ]:
+
+
+model = Prophet(yearly_seasonality=True, daily_seasonality=True)
+model.fit(X)
+
+
+# In[ ]:
+
+
+future = model.make_future_dataframe(periods = test_df.date.unique().shape[0])
+future = future[train_df.date.unique().shape[0]:]
+
+
+# In[ ]:
+
+
 ej_df = pd.DataFrame(columns = list(items), index = oktmo)
 
 for itm in tqdm(items):
@@ -566,24 +594,24 @@ for itm in tqdm(items):
 
 for itm in tqdm(items):
     for reg in individual_models[itm]:
-        X = train_df.loc[train_df.oktmo == reg, ['date', itm]]
-        X = X.reset_index()[['date', itm]]
-        X.columns=['ds', 'y']
-        
-        model = Prophet(yearly_seasonality=True, daily_seasonality=True,
-                seasonality_mode='multiplicative',  # hz. future firecast more sharp
-                #changepoint_prior_scale=0.15,   # 0.1 - 0.15 looks adequately
-                holidays = all_holidays,
-                #changepoints=['2020-09-23', '2020-03-09', '2020-10-26'],
-               )
-        model.fit(X)
-        forecast = model.predict(future)
+        if reg != 26000000000:
+            X = train_df.loc[train_df.oktmo == reg, ['date', itm]]
+            X = X.reset_index()[['date', itm]]
+            X.columns=['ds', 'y']
 
-        if reg == 26000000000:
+            model = Prophet(yearly_seasonality=True, daily_seasonality=True,
+                    seasonality_mode='multiplicative',  # hz. future firecast more sharp
+                    #changepoint_prior_scale=0.15,   # 0.1 - 0.15 looks adequately
+                    holidays = all_holidays,
+                    #changepoints=['2020-09-23', '2020-03-09', '2020-10-26'],
+                   )
+            model.fit(X)
+            forecast = model.predict(future)
+        else:
             forecast.yhat = forecast.yhat * 0
 
         v_mae_j  = mean_absolute_error( test_df.loc[test_df.oktmo == reg, itm], forecast.yhat.values)
-        v_mean_j  = np.mean(forecast.yhat.values)
+        v_mean_j = np.mean(forecast.yhat.values)
 
         if v_mean_j == 0:
             ej_df.loc[reg, itm] = 55.55555555
@@ -625,7 +653,7 @@ ej_df.to_csv(os.path.join(PATH_DATA, 'ej_part_upd500.csv'))
 # In[ ]:
 
 
-
+# 0.0003664181624199924 2.729122359534649
 
 
 # In[ ]:
@@ -685,96 +713,6 @@ X.head()
 
 
 
-
-
-# In[ ]:
-
-
-NY =  pd.DataFrame({
-  'holiday': 'new year',
-  'ds': pd.to_datetime(['2019-01-01', '2020-01-01', '2021-01-01', '2022-01-01']),
-  'lower_window': -7,  # 7 days before holiday affect on values
-  'upper_window': 12, # 12 days after holiday affect on values
-})
-
-#= pd.DataFrame({
-#  'holiday': '',
-#  'ds': pd.to_datetime([]),
-# 'lower_window': ,  #  days before holiday affect on values
-#  'upper_window': , #  days after holiday affect on values
-#})
-
-feb14 = pd.DataFrame({
-  'holiday': 'valentines day',
-  'ds': pd.to_datetime(['2019-02-14', '2020-02-14', '2021-02-14', '2022-02-14']),
-  'lower_window': -1,  # 1 days before holiday affect on values
-  'upper_window': 1,  # 1 days after holiday affect on values
-})
-
-feb23 = pd.DataFrame({
-  'holiday': 'defender of the fatherland day',
-  'ds': pd.to_datetime(['2019-02-23', '2020-02-23', '2021-02-23', '2022-02-23']),
-  'lower_window': -5,  # 5 days before holiday affect on values
-  'upper_window': 3,  # 3 days after holiday affect on values
-})
-
-march8 = pd.DataFrame({
-  'holiday': 'womens day',
-  'ds': pd.to_datetime(['2019-03-08', '2020-03-08', '2021-03-08', '2022-03-08']),
-  'lower_window': -3,  # 3 days before holiday affect on values
-  'upper_window': 1,  # 1 days after holiday affect on values
-})
-
-easter = pd.DataFrame({
-  'holiday': 'easter',
-  'ds': pd.to_datetime(['2019-04-28', '2020-04-19', '2021-05-02', '2022-04-24']),
-  'lower_window': -4,  # 4 days before holiday affect on values
-  'upper_window': 1,  # 1 days after holiday affect on values
-})
-
-
-may1 = pd.DataFrame({
-  'holiday': 'labor day',
-  'ds': pd.to_datetime(['2019-05-10', '2020-05-01', '2021-05-01', '2022-05-01']),
-  'lower_window': -1,  # 1 days before holiday affect on values
-  'upper_window': 6,  # 6 days after holiday affect on values
-})
-
-may9 = pd.DataFrame({
-  'holiday': 'v-day',
-  #'ds': pd.to_datetime(['2019-05-09', '2020-05-09', '2021-05-09', '2022-05-09']),
-  'ds': pd.to_datetime(['2019-05-09', '2021-05-09', '2022-05-09']), #???????????????????????????
-  'lower_window': -3,  # 3 days before holiday affect on values
-  'upper_window': 2,  # 2 days after holiday affect on values
-})
-
-russia_day = pd.DataFrame({
-  'holiday': 'russia day',
-  'ds': pd.to_datetime(['2019-06-12', '2020-06-12', '2021-06-12', '2022-06-12']),
-  'lower_window': -3,  # 3 days before holiday affect on values
-  'upper_window': 3,  # 3 days after holiday affect on values
-})
-
-teachers_day = pd.DataFrame({
-  'holiday': 'teachers day',
-  'ds': pd.to_datetime(['2019-10-05', '2020-10-05', '2021-10-05', '2022-10-05']),
-  'lower_window': -1,  # 1 days before holiday affect on values
-  'upper_window': 0,  # 0 days after holiday affect on values
-})
-
-national_unity_day = pd.DataFrame({
-  'holiday': 'national unity day',
-  'ds': pd.to_datetime(['2019-11-04', '2020-11-04', '2021-11-04', '2021-11-04']),
-  'lower_window': -1,  #  days before holiday affect on values
-  'upper_window': 0, #  days after holiday affect on values
-})
-
-
-# In[ ]:
-
-
-holidays = pd.concat((NY, feb14, feb23, march8, easter, may1, may9, russia_day, teachers_day, national_unity_day))
-#holidays.reset_index(inplace = True)
 
 
 # In[ ]:

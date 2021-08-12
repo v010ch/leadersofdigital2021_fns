@@ -48,7 +48,12 @@
 ### sum                                                    0.0021403550452949653
 
 
-
 ### full on full in calculate_deviation with no zeros and no holidays
 ### seasonality_mode='multiplicative' + holidays. val > 0. ingush = 0
 ### sum                                                    0.0022222080500558196
+
+
+
+### full on full in calculate_deviation with no zeros
+### seasonality_mode='multiplicative' + holidays. val > 0. ingush = 0
+### sum                                                    0.0022268169672511507
