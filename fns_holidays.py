@@ -10,12 +10,12 @@ NY =  DataFrame({
   'upper_window': 12, # 12 days after holiday affect on values
 })
 
-#= pd.DataFrame({
-#  'holiday': '',
-#  'ds': pd.to_datetime([]),
-# 'lower_window': ,  #  days before holiday affect on values
-#  'upper_window': , #  days after holiday affect on values
-#})
+lockdown = DataFrame({
+  'holiday': 'lockdown',
+  'ds': to_datetime(['2020-03-17']),
+ 'lower_window': -10,  #  days before holiday affect on values
+  'upper_window': 20, #  days after holiday affect on values
+})
 
 feb14 = DataFrame({
   'holiday': 'valentines day',
@@ -83,4 +83,4 @@ national_unity_day = DataFrame({
 })
 
 
-all_holidays = concat((NY, feb14, feb23, march8, easter, may1, may9, russia_day, teachers_day, national_unity_day))
+all_holidays = concat((NY, lockdown, feb14, feb23, march8, easter, may1, may9, russia_day, teachers_day, national_unity_day))
